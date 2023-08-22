@@ -1,0 +1,340 @@
+mysql> source C:\Users\conno\Desktop\CS-31A\my_scripts\caaron_assignment8\caaron_assignment8.sql
+--------------
+/* Assignment8.sql 
+   CONNOR AARON
+   CS 31A, Fall 2021
+*/
+
+/* put the database name into this command */
+USE restaurant
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+/* Query 1 */
+/*
+Question : Construct an inline view from the restaurant database that lists the last name, salary, department ID, and maximum salary for each department. 
+Hint: One query will need to calculate maximum salary by department ID.
+*/
+SELECT s.last_name, s.salary, s.dept_id
+FROM staff s, 
+	(SELECT dept_id, MAX(salary) maxsalary
+    FROM staff
+    GROUP BY dept_id) d
+WHERE s.dept_id = d.dept_id
+AND s.salary = d.maxsalary
+ORDER BY dept_id
+--------------
+
++-----------+---------+---------+
+| last_name | salary  | dept_id |
++-----------+---------+---------+
+| Nolan     | 9646.00 |      10 |
+| Zayden    | 9661.00 |      20 |
+| Raymond   | 9808.00 |      30 |
+| Spurman   | 7537.00 |      40 |
+| Milan     | 9090.00 |      50 |
+| Yusuf     | 3582.00 |      60 |
++-----------+---------+---------+
+6 rows in set (0.00 sec)
+
+--------------
+/* Query 2 */
+/*
+Question : Create a new table called my_departments and add all columns and all rows to it using a subquery 
+from the departments table. Do a SELECT statement to confirm that you have all the columns and rows. 
+Create or enable the department_id column as the primary key. 
+*/
+CREATE TABLE my_departments AS (SELECT * FROM departments)
+--------------
+
+Query OK, 6 rows affected (0.04 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+--------------
+ALTER TABLE my_departments
+ADD CONSTRAINT my_departments_id_pk PRIMARY KEY(department_id)
+--------------
+
+Query OK, 0 rows affected (0.06 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+--------------
+DESCRIBE my_departments
+--------------
+
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| department_id   | decimal(4,0) | NO   | PRI | NULL    |       |
+| department_name | varchar(30)  | NO   |     | NULL    |       |
+| manager_id      | decimal(6,0) | YES  |     | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+--------------
+SELECT * 
+FROM my_departments
+--------------
+
++---------------+-----------------+------------+
+| department_id | department_name | manager_id |
++---------------+-----------------+------------+
+|            10 | Administration  |        200 |
+|            20 | Kitchen Staff   |        201 |
+|            30 | Delivery Staff  |        124 |
+|            40 | IT              |        103 |
+|            50 | Floor Staff     |        100 |
+|            60 | Accounting      |        205 |
++---------------+-----------------+------------+
+6 rows in set (0.00 sec)
+
+--------------
+/* Query 3 */
+/*
+Question : Create a view called view_my_departments that includes: department_id and department_name.  
+Add the following data to the my_departments table using view_my_departments. 
+department_id     department_name  
+105               Advertising  
+120               Custodial  
+130               Planning
+*/
+CREATE OR REPLACE VIEW view_my_departments
+AS SELECT department_id, department_name
+	FROM my_departments
+--------------
+
+Query OK, 0 rows affected (0.01 sec)
+
+--------------
+INSERT INTO view_my_departments(department_id, department_name)
+VALUES (105, "Advertising")
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+INSERT INTO view_my_departments(department_id, department_name)
+VALUES (120, "Custodial")
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+INSERT INTO view_my_departments(department_id, department_name)
+VALUES (130, "Planning")
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+/* Query 4 */
+/*
+Question : Add the Human Resources department, department ID 220 to my_departments using 
+view_my_departments.
+Verify that the new additions to my_departments were added using view_my_departments. 
+*/
+INSERT INTO view_my_departments(department_id, department_name)
+VALUES (220, "Human Resources")
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+SELECT *
+FROM my_departments
+--------------
+
++---------------+-----------------+------------+
+| department_id | department_name | manager_id |
++---------------+-----------------+------------+
+|            10 | Administration  |        200 |
+|            20 | Kitchen Staff   |        201 |
+|            30 | Delivery Staff  |        124 |
+|            40 | IT              |        103 |
+|            50 | Floor Staff     |        100 |
+|            60 | Accounting      |        205 |
+|           105 | Advertising     |       NULL |
+|           120 | Custodial       |       NULL |
+|           130 | Planning        |       NULL |
+|           220 | Human Resources |       NULL |
++---------------+-----------------+------------+
+10 rows in set (0.00 sec)
+
+--------------
+/* Query 5 */
+/*
+Question : Create a view named item_ordered. It consists of the food item number, item description, price, order 
+number, order date, quantity, and price for all ordered food items currently on file. Write and execute the CREATE 
+VIEW command to create the item_ordered view.   
+*/
+CREATE OR REPLACE VIEW item_ordered
+AS SELECT item_number, description, price, order_number, quantity, order_date
+	FROM food_items 
+	JOIN order_lines USING (item_number)
+	JOIN orders USING (order_number)
+--------------
+
+Query OK, 0 rows affected (0.01 sec)
+
+--------------
+SELECT * FROM item_ordered
+--------------
+
++-------------+------------------------+-------+--------------+----------+------------+
+| item_number | description            | price | order_number | quantity | order_date |
++-------------+------------------------+-------+--------------+----------+------------+
+|          80 | Cheeseburger           |  8.09 |         5343 |        2 | 2020-01-03 |
+|          85 | Apple Slices           |  3.59 |         5343 |        1 | 2020-01-03 |
+|          83 | Chicken Sandwich       |  9.59 |         5363 |        1 | 2020-10-03 |
+|          95 | Baked Apple Pie        |  1.09 |         5393 |        4 | 2020-08-03 |
+|          90 | Hamburger              |  1.09 |         5623 |        2 | 2020-04-05 |
+|          91 | Spicy Chicken Sandwich |  1.09 |         5623 |        2 | 2020-04-05 |
+|          92 | Iced Latte             |  3.59 |         5623 |        1 | 2020-04-05 |
+|          90 | Hamburger              |  1.09 |         5682 |        1 | 2020-05-09 |
+|          95 | Baked Apple Pie        |  1.09 |         5682 |        2 | 2020-05-09 |
+|          93 | Chicken McNuggets      |  3.59 |         5683 |        2 | 2020-05-09 |
+|          95 | Baked Apple Pie        |  1.09 |         5683 |        1 | 2020-05-09 |
+|          92 | Iced Latte             |  3.59 |         5691 |        2 | 2020-07-03 |
+|          96 | Sugar Cookie           |  3.59 |         5691 |        2 | 2020-07-03 |
+|          90 | Hamburger              |  1.09 |         5693 |        2 | 2020-08-19 |
+|          95 | Baked Apple Pie        |  1.09 |         5693 |        1 | 2020-08-19 |
+|          90 | Hamburger              |  1.09 |         5694 |        2 | 2020-07-03 |
+|          97 | Caesar Salad           |  3.59 |         5694 |        2 | 2020-07-03 |
+|          80 | Cheeseburger           |  8.09 |         5773 |        2 | 2020-04-21 |
+|          80 | Cheeseburger           |  8.09 |         5783 |        2 | 2020-04-05 |
+|          85 | Apple Slices           |  3.59 |         5783 |        1 | 2020-04-05 |
+|          82 | Spicy Chicken McBite   | 10.09 |         5791 |        2 | 2020-05-09 |
+|          83 | Chicken Sandwich       |  9.59 |         5791 |        3 | 2020-05-09 |
+|          86 | SRoast Coffee          |  5.75 |         5791 |        2 | 2020-05-09 |
+|          80 | Cheeseburger           |  8.09 |         5792 |        1 | 2020-05-09 |
+|          85 | Apple Slices           |  3.59 |         5792 |        2 | 2020-05-09 |
+|          81 | Double Cheeseburger    | 13.59 |         5793 |        2 | 2020-08-03 |
+|          82 | Spicy Chicken McBite   | 10.09 |         5793 |        1 | 2020-08-03 |
+|          83 | Chicken Sandwich       |  9.59 |         5793 |        2 | 2020-08-03 |
+|          85 | Apple Slices           |  3.59 |         5793 |        1 | 2020-08-03 |
+|          90 | Hamburger              |  1.09 |         5793 |        2 | 2020-08-03 |
+|          93 | Chicken McNuggets      |  3.59 |         5793 |        1 | 2020-08-03 |
+|          95 | Baked Apple Pie        |  1.09 |         5793 |        1 | 2020-08-03 |
+|          80 | Cheeseburger           |  8.09 |         5794 |        2 | 2020-07-03 |
+|          87 | BBQ Snack Wrap         |  3.59 |         5794 |        2 | 2020-07-03 |
+|          80 | Cheeseburger           |  8.09 |         5798 |        2 | 2020-03-03 |
+|          87 | BBQ Snack Wrap         |  3.59 |         5798 |        1 | 2020-03-03 |
+|          82 | Spicy Chicken McBite   | 10.09 |         5799 |        1 | 2020-04-03 |
+|          93 | Chicken McNuggets      |  3.59 |         6693 |        1 | 2020-10-03 |
+|          80 | Cheeseburger           |  8.09 |         7383 |        2 | 2020-10-03 |
+|          83 | Chicken Sandwich       |  9.59 |         7383 |        1 | 2020-10-03 |
+|          90 | Hamburger              |  1.09 |         7693 |        2 | 2020-10-03 |
++-------------+------------------------+-------+--------------+----------+------------+
+41 rows in set (0.01 sec)
+
+--------------
+/* Query 6 */
+/*
+Question : Write and execute the command to retrieve the item number, description, order number, and quoted 
+price for all orders in the item_ordered view for food items with prices that exceed $5.   
+*/
+SELECT item_number, description, order_number, price
+FROM item_ordered 
+WHERE price > 5
+ORDER BY order_number
+--------------
+
++-------------+----------------------+--------------+-------+
+| item_number | description          | order_number | price |
++-------------+----------------------+--------------+-------+
+|          80 | Cheeseburger         |         5343 |  8.09 |
+|          83 | Chicken Sandwich     |         5363 |  9.59 |
+|          80 | Cheeseburger         |         5773 |  8.09 |
+|          80 | Cheeseburger         |         5783 |  8.09 |
+|          82 | Spicy Chicken McBite |         5791 | 10.09 |
+|          83 | Chicken Sandwich     |         5791 |  9.59 |
+|          86 | SRoast Coffee        |         5791 |  5.75 |
+|          80 | Cheeseburger         |         5792 |  8.09 |
+|          81 | Double Cheeseburger  |         5793 | 13.59 |
+|          82 | Spicy Chicken McBite |         5793 | 10.09 |
+|          83 | Chicken Sandwich     |         5793 |  9.59 |
+|          80 | Cheeseburger         |         5794 |  8.09 |
+|          80 | Cheeseburger         |         5798 |  8.09 |
+|          82 | Spicy Chicken McBite |         5799 | 10.09 |
+|          80 | Cheeseburger         |         7383 |  8.09 |
+|          83 | Chicken Sandwich     |         7383 |  9.59 |
++-------------+----------------------+--------------+-------+
+16 rows in set (0.00 sec)
+
+--------------
+/* Query 7 */
+/*
+Question : Create a view named salary_view that returns the highest salary, lowest salary, average salary, and 
+department name.     
+*/ 
+CREATE OR REPLACE VIEW salary_view
+AS SELECT d.department_name, MAX(s.salary) AS "Highest Salary", MIN(s.salary) AS "Lowest Salary", AVG(s.salary) AS "Average Salary"
+	FROM departments d JOIN staff s ON (d.department_id = s.dept_id)
+	GROUP BY department_name
+--------------
+
+Query OK, 0 rows affected (0.01 sec)
+
+--------------
+SELECT * 
+FROM salary_view
+--------------
+
++-----------------+----------------+---------------+----------------+
+| department_name | Highest Salary | Lowest Salary | Average Salary |
++-----------------+----------------+---------------+----------------+
+| Administration  |        9646.00 |       2973.00 |    6295.333333 |
+| Kitchen Staff   |        9661.00 |       1136.00 |    4409.333333 |
+| Delivery Staff  |        9808.00 |       3767.00 |    7062.750000 |
+| IT              |        7537.00 |       4400.00 |    5968.500000 |
+| Floor Staff     |        9090.00 |       2453.00 |    5795.333333 |
+| Accounting      |        3582.00 |       1879.00 |    2966.000000 |
++-----------------+----------------+---------------+----------------+
+6 rows in set (0.00 sec)
+
+--------------
+/* Query 8 */
+/*
+Question : Create a view named dept_managers_view that returns a listing of department names along with the 
+manager initial and surname for that department. Test the view by returning all the rows from it. Make sure no 
+rows can be updated through the view. 
+*/
+CREATE OR REPLACE VIEW dept_managers_view
+AS SELECT d.department_name, CONCAT(SUBSTR(s.first_name, 1, 1), '. ', s.last_name) AS "Manager"
+	FROM departments d 
+	JOIN staff s ON (d.department_id = s.dept_id)
+	WHERE s.staff_id = d.manager_id
+    GROUP BY d.department_name
+--------------
+
+Query OK, 0 rows affected (0.01 sec)
+
+--------------
+UPDATE  dept_managers_view
+SET manager = "C. Landon"
+WHERE department_name = "Administration"
+--------------
+
+ERROR 1288 (HY000): The target table dept_managers_view of the UPDATE is not updatable
+--------------
+UPDATE dept_managers_view
+SET department_name = "IT"
+WHERE manager = "J. Nolan"
+--------------
+
+ERROR 1288 (HY000): The target table dept_managers_view of the UPDATE is not updatable
+--------------
+SELECT * 
+FROM dept_managers_view
+--------------
+
++-----------------+----------+
+| department_name | Manager  |
++-----------------+----------+
+| Administration  | J. Nolan |
++-----------------+----------+
+1 row in set (0.00 sec)
+
+mysql> notee

@@ -1,0 +1,558 @@
+mysql> source C:\Users\conno\Desktop\CS-31A\my_scripts\caaron_project_part1\caaron_project_part1.sql
+--------------
+/* Project_Part1.sql 
+   CONNOR AARON
+   CS 31A, Fall 2021
+*/
+/*
+TASK 1:
+Write the DDL statements for creating the tables for the University database. Include NOT NULL constraints where necessary.
+Choose appropriate data types for each attribute.
+*/
+/*
+TASK 2:    
+Identify foreign keys for the database tables. Also specify tables referenced by the foreign key.
+Note: Some tables have composite primary key. Identify all composite key attributes for such tables.
+*/
+
+DROP DATABASE IF EXISTS university
+--------------
+
+Query OK, 13 rows affected (0.18 sec)
+
+--------------
+CREATE DATABASE university
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+Database changed
+--------------
+-- drop all tables if they exist
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS academic_session
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+--------------
+DROP TABLE IF EXISTS department
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+--------------
+DROP TABLE IF EXISTS parent_info
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS student
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS course
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS faculty
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS exam_type
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS exam
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS exam_result
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS student_att
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+--------------
+DROP TABLE IF EXISTS student_course
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+--------------
+DROP TABLE IF EXISTS faculty_course
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+DROP TABLE IF EXISTS faculty_login
+--------------
+
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+--------------
+-- Create academic_session table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE academic_session(
+	session_id INT,
+    session_name VARCHAR(30) UNIQUE KEY,
+    CONSTRAINT session_pk PRIMARY KEY (session_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.04 sec)
+
+--------------
+-- Create department table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE department(
+	dept_id INT,
+    dept_name VARCHAR(30) UNIQUE KEY,
+    head VARCHAR(50),
+    CONSTRAINT department_pk PRIMARY KEY (dept_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.04 sec)
+
+--------------
+-- Create parent_info table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE parent_info(
+	parent_id INT, 
+    parent1_fn VARCHAR(25), 
+    parent1_ln VARCHAR(35), 
+    parent2_fn VARCHAR(25), 
+    parent2_ln VARCHAR(35),
+    CONSTRAINT parent_pk PRIMARY KEY (parent_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+-- Create student table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE student(
+	student_id INT,
+    first_name VARCHAR(25) NOT NULL,
+    last_name VARCHAR(35) NOT NULL,
+    reg_year DATE NOT NULL,
+    email VARCHAR(50) UNIQUE KEY,
+    parent_id INT,
+    CONSTRAINT student_pk PRIMARY KEY (student_id),
+    CONSTRAINT student_parent_fk FOREIGN KEY(parent_id) 
+		REFERENCES parent_info(parent_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.04 sec)
+
+--------------
+-- Create course table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE course(
+	course_id INT,
+    course_name VARCHAR(100) UNIQUE KEY,
+    session_id INT, 
+    dept_id INT, 
+    logon_id VARCHAR(20), 
+    password VARCHAR(25), 
+    building VARCHAR(25), 
+    room VARCHAR(10), 
+    date_time VARCHAR(15),
+    CONSTRAINT course_pk PRIMARY KEY (course_id),
+    CONSTRAINT course_session_fk FOREIGN KEY(session_id) 
+		REFERENCES academic_session(session_id),
+    CONSTRAINT course_department_fk FOREIGN KEY(dept_id) 
+		REFERENCES department(dept_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.05 sec)
+
+--------------
+-- Create faculty table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE faculty(
+	faculty_id INT, 
+    first_name VARCHAR(25) NOT NULL, 
+    last_name VARCHAR(35) NOT NULL, 
+    faculty_email VARCHAR(50) UNIQUE KEY, 
+    salary INT, 
+    insurance VARCHAR(50), 
+    hourly_rate INT, 
+    dept_id INT ,
+    CONSTRAINT faculty_pk PRIMARY KEY (faculty_id),
+    CONSTRAINT faculty_department_fk FOREIGN KEY(dept_id) 
+		REFERENCES department(dept_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.04 sec)
+
+--------------
+-- Create exam_type table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE exam_type(
+	exam_type CHAR(4),
+    name VARCHAR(35) NOT NULL,
+    description VARCHAR(100) NOT NULL,
+    CONSTRAINT exam_type_pk PRIMARY KEY (exam_type)
+)
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+-- Create exam table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE exam(
+	exam_id INT,
+    start_date DATE NOT NULL,
+    exam_type CHAR(4),
+    course_id INT,
+    CONSTRAINT exam_pk PRIMARY KEY (exam_id),
+    CONSTRAINT exam_exam_type_fk FOREIGN KEY(exam_type) 
+		REFERENCES exam_type(exam_type),
+    CONSTRAINT exam_course_fk FOREIGN KEY(course_id) 
+		REFERENCES course(course_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.05 sec)
+
+--------------
+-- Create exam_result table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE exam_result(
+	student_id INT,
+    course_id INT,
+    exam_id INT,
+    exam_grade INT NOT NULL,
+    CONSTRAINT exam_result_pk PRIMARY KEY (student_id, course_id, exam_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+-- Create student_att table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE student_att(
+	student_id INT,
+    session_id INT,
+    num_work_days INT NOT NULL,
+    num_days_off INT,
+    exam_eligibility CHAR(1) NOT NULL,
+    CONSTRAINT student_att_pk PRIMARY KEY (student_id, session_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+-- Create student_course table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE student_course(
+	student_id INT,
+    course_id INT,
+    grade CHAR(1) NOT NULL,
+    CONSTRAINT student_course_pk PRIMARY KEY (student_id, course_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+-- Create faculty_course table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE faculty_course(
+	faculty_id INT,
+    course_id INT,
+    contact_hrs INT NOT NULL,
+    CONSTRAINT faculty_course_pk PRIMARY KEY (faculty_id, course_id)
+)
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+-- Create faculty_login table
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+CREATE TABLE faculty_login(
+	faculty_id INT,
+    login_date_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT faculty_login_pk PRIMARY KEY (faculty_id, login_date_time)
+)
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+-- Show table descriptions in University Database
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+DESCRIBE academic_session
+--------------
+
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| session_id   | int         | NO   | PRI | NULL    |       |
+| session_name | varchar(30) | YES  | UNI | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+--------------
+DESCRIBE department
+--------------
+
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| dept_id   | int         | NO   | PRI | NULL    |       |
+| dept_name | varchar(30) | YES  | UNI | NULL    |       |
+| head      | varchar(50) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+--------------
+DESCRIBE parent_info
+--------------
+
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| parent_id  | int         | NO   | PRI | NULL    |       |
+| parent1_fn | varchar(25) | YES  |     | NULL    |       |
+| parent1_ln | varchar(35) | YES  |     | NULL    |       |
+| parent2_fn | varchar(25) | YES  |     | NULL    |       |
+| parent2_ln | varchar(35) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+--------------
+DESCRIBE student
+--------------
+
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| student_id | int         | NO   | PRI | NULL    |       |
+| first_name | varchar(25) | NO   |     | NULL    |       |
+| last_name  | varchar(35) | NO   |     | NULL    |       |
+| reg_year   | date        | NO   |     | NULL    |       |
+| email      | varchar(50) | YES  | UNI | NULL    |       |
+| parent_id  | int         | YES  | MUL | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+--------------
+DESCRIBE course
+--------------
+
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| course_id   | int          | NO   | PRI | NULL    |       |
+| course_name | varchar(100) | YES  | UNI | NULL    |       |
+| session_id  | int          | YES  | MUL | NULL    |       |
+| dept_id     | int          | YES  | MUL | NULL    |       |
+| logon_id    | varchar(20)  | YES  |     | NULL    |       |
+| password    | varchar(25)  | YES  |     | NULL    |       |
+| building    | varchar(25)  | YES  |     | NULL    |       |
+| room        | varchar(10)  | YES  |     | NULL    |       |
+| date_time   | varchar(15)  | YES  |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+--------------
+DESCRIBE faculty
+--------------
+
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| faculty_id    | int         | NO   | PRI | NULL    |       |
+| first_name    | varchar(25) | NO   |     | NULL    |       |
+| last_name     | varchar(35) | NO   |     | NULL    |       |
+| faculty_email | varchar(50) | YES  | UNI | NULL    |       |
+| salary        | int         | YES  |     | NULL    |       |
+| insurance     | varchar(50) | YES  |     | NULL    |       |
+| hourly_rate   | int         | YES  |     | NULL    |       |
+| dept_id       | int         | YES  | MUL | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+--------------
+DESCRIBE exam_type
+--------------
+
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| exam_type   | char(4)      | NO   | PRI | NULL    |       |
+| name        | varchar(35)  | NO   |     | NULL    |       |
+| description | varchar(100) | NO   |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+--------------
+DESCRIBE exam
+--------------
+
++------------+---------+------+-----+---------+-------+
+| Field      | Type    | Null | Key | Default | Extra |
++------------+---------+------+-----+---------+-------+
+| exam_id    | int     | NO   | PRI | NULL    |       |
+| start_date | date    | NO   |     | NULL    |       |
+| exam_type  | char(4) | YES  | MUL | NULL    |       |
+| course_id  | int     | YES  | MUL | NULL    |       |
++------------+---------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+--------------
+DESCRIBE exam_result
+--------------
+
++------------+------+------+-----+---------+-------+
+| Field      | Type | Null | Key | Default | Extra |
++------------+------+------+-----+---------+-------+
+| student_id | int  | NO   | PRI | NULL    |       |
+| course_id  | int  | NO   | PRI | NULL    |       |
+| exam_id    | int  | NO   | PRI | NULL    |       |
+| exam_grade | int  | NO   |     | NULL    |       |
++------------+------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+--------------
+DESCRIBE student_att
+--------------
+
++------------------+---------+------+-----+---------+-------+
+| Field            | Type    | Null | Key | Default | Extra |
++------------------+---------+------+-----+---------+-------+
+| student_id       | int     | NO   | PRI | NULL    |       |
+| session_id       | int     | NO   | PRI | NULL    |       |
+| num_work_days    | int     | NO   |     | NULL    |       |
+| num_days_off     | int     | YES  |     | NULL    |       |
+| exam_eligibility | char(1) | NO   |     | NULL    |       |
++------------------+---------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+--------------
+DESCRIBE student_course
+--------------
+
++------------+---------+------+-----+---------+-------+
+| Field      | Type    | Null | Key | Default | Extra |
++------------+---------+------+-----+---------+-------+
+| student_id | int     | NO   | PRI | NULL    |       |
+| course_id  | int     | NO   | PRI | NULL    |       |
+| grade      | char(1) | NO   |     | NULL    |       |
++------------+---------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+--------------
+DESCRIBE faculty_course
+--------------
+
++-------------+------+------+-----+---------+-------+
+| Field       | Type | Null | Key | Default | Extra |
++-------------+------+------+-----+---------+-------+
+| faculty_id  | int  | NO   | PRI | NULL    |       |
+| course_id   | int  | NO   | PRI | NULL    |       |
+| contact_hrs | int  | NO   |     | NULL    |       |
++-------------+------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+--------------
+DESCRIBE faculty_login
+--------------
+
++-----------------+----------+------+-----+-------------------+-------------------+
+| Field           | Type     | Null | Key | Default           | Extra             |
++-----------------+----------+------+-----+-------------------+-------------------+
+| faculty_id      | int      | NO   | PRI | NULL              |                   |
+| login_date_time | datetime | NO   | PRI | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++-----------------+----------+------+-----+-------------------+-------------------+
+2 rows in set (0.00 sec)
+
+mysql> notee

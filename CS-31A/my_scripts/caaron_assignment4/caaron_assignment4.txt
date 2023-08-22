@@ -1,0 +1,271 @@
+mysql> source C:\Users\conno\Desktop\CS-31A\my_scripts\caaron_assignment4\caaron_assignment4.sql
+--------------
+/* Assignment4.sql 
+   CONNOR AARON
+   CS 31A, Fall 2021
+*/
+
+/* put the database name into this command */
+USE restaurant
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+/* Query 1 */
+-- Question : Write the CREATE TABLE statement for the International Foods Restaurant global locations table. Define the constraints at the column level.
+CREATE TABLE global_locations(
+id INT(4) NOT NULL PRIMARY KEY,
+loc_name VARCHAR(20) NOT NULL,
+address VARCHAR(20),
+city VARCHAR(20),
+zip_postal_code VARCHAR(20),
+phone VARCHAR(15),
+email VARCHAR(15) NOT NULL UNIQUE,
+manager_id INT(4),
+emergency_contact VARCHAR(20)
+)ENGINE = INNODB
+--------------
+
+Query OK, 0 rows affected, 2 warnings (0.04 sec)
+
+--------------
+DESCRIBE global_locations
+--------------
+
++-------------------+-------------+------+-----+---------+-------+
+| Field             | Type        | Null | Key | Default | Extra |
++-------------------+-------------+------+-----+---------+-------+
+| id                | int         | NO   | PRI | NULL    |       |
+| loc_name          | varchar(20) | NO   |     | NULL    |       |
+| address           | varchar(20) | YES  |     | NULL    |       |
+| city              | varchar(20) | YES  |     | NULL    |       |
+| zip_postal_code   | varchar(20) | YES  |     | NULL    |       |
+| phone             | varchar(15) | YES  |     | NULL    |       |
+| email             | varchar(15) | NO   | UNI | NULL    |       |
+| manager_id        | int         | YES  |     | NULL    |       |
+| emergency_contact | varchar(20) | YES  |     | NULL    |       |
++-------------------+-------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+--------------
+/* Query 2 */
+-- Question : Rewrite the CREATE TABLE statement for the International Foods Restaurant locations table to define the UNIQUE constraints at the table level. Do not execute this statement. 
+/*
+CREATE TABLE global_locations(
+id INT(4) NOT NULL PRIMARY KEY,
+loc_name VARCHAR(20) NOT NULL,
+address VARCHAR(20),
+city VARCHAR(20),
+zip_postal_code VARCHAR(20),
+phone VARCHAR(15),
+email VARCHAR(15) NOT NULL,
+manager_id INT(4),
+emergency_contact VARCHAR(20),
+UNIQUE (email)
+)ENGINE = INNODB;
+*/
+
+/* Query 3 */
+-- Question : Alter the global_locations table to add a column that stores the dateof open location. 
+ALTER TABLE global_locations
+ADD date_opened DATE
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+--------------
+/* Query 4 */
+-- Question : Display column names and datatypes for the global_locations table.
+DESCRIBE global_locations
+--------------
+
++-------------------+-------------+------+-----+---------+-------+
+| Field             | Type        | Null | Key | Default | Extra |
++-------------------+-------------+------+-----+---------+-------+
+| id                | int         | NO   | PRI | NULL    |       |
+| loc_name          | varchar(20) | NO   |     | NULL    |       |
+| address           | varchar(20) | YES  |     | NULL    |       |
+| city              | varchar(20) | YES  |     | NULL    |       |
+| zip_postal_code   | varchar(20) | YES  |     | NULL    |       |
+| phone             | varchar(15) | YES  |     | NULL    |       |
+| email             | varchar(15) | NO   | UNI | NULL    |       |
+| manager_id        | int         | YES  |     | NULL    |       |
+| emergency_contact | varchar(20) | YES  |     | NULL    |       |
+| date_opened       | date        | YES  |     | NULL    |       |
++-------------------+-------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+--------------
+/* Query 5 */
+-- Question : Delete the date_opened column from the global_locationstable.
+ALTER TABLE global_locations
+DROP COLUMN date_opened
+--------------
+
+Query OK, 0 rows affected (0.08 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+--------------
+/* Query 6 */
+-- Question : Rename the global_locationstable as global_locations_backup.
+RENAME TABLE global_locations
+TO global_locations_backup
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+/* Query 7 */
+-- Question : Write an INSERT statement that adds this row to the customers table:
+INSERT INTO customers (customer_ID, first_name, last_name, phone_number, address, city, state, zip)
+VALUES (60, 'brian', 'rogers', '01654564898', '820 Bounty Drive', 'Palo Alto', 'CA', '94342')
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+/* Query 8 */
+-- Question : Create the three o_tables (jobs, employees, and departments) using the syntax:
+CREATE TABLE o_jobs AS (SELECT * FROM jobs)
+--------------
+
+Query OK, 13 rows affected (0.04 sec)
+Records: 13  Duplicates: 0  Warnings: 0
+
+--------------
+CREATE TABLE o_staff AS (SELECT staff_id, first_name, last_name, email, hire_date, job_id FROM staff)
+--------------
+
+Query OK, 30 rows affected (0.05 sec)
+Records: 30  Duplicates: 0  Warnings: 0
+
+--------------
+CREATE TABLE o_departments AS (SELECT * FROM departments)
+--------------
+
+Query OK, 6 rows affected (0.05 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+--------------
+/* Query 9 */
+-- Question : Write an INSERT statement that adds the Human Resources job to the o_jobs table:
+INSERT INTO o_jobs (job_id, job_title, min_salary, max_salary)
+VALUES ('hr_man', 'human resources manager', 4500, 5500)
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+/*  Query 10 */
+-- Question : Rename the o_jobs table to o_job_description.
+RENAME TABLE o_jobs
+TO o_job_description
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+/*  Query 11 */
+-- Question : Three new employees hired for this department are shown in the table. Add them to the o_staff table.Each employee will need an email address created from the first letter of the employee’s first name combined with the employee’s last name (Bob Smith would be BSMITH). 
+INSERT INTO o_staff (staff_id, first_name, last_name, email, hire_date, job_id)
+VALUES (210, 'Ramon', 'Sanchez', 'RSANCHEZ', CURDATE(), 'HR_MAN')
+--------------
+
+Query OK, 1 row affected (0.00 sec)
+
+--------------
+INSERT INTO o_staff (staff_id, first_name, last_name, email, hire_date, job_id)
+VALUES (211, 'Tai', 'Sugita', 'TSUGITA', CURDATE(), 'HR_MAN')
+--------------
+
+Query OK, 1 row affected (0.01 sec)
+
+--------------
+INSERT INTO o_staff (staff_id, first_name, last_name, email, hire_date, job_id)
+VALUES (212, 'Alina', 'Arcos', 'AARCOS', CURDATE(), 'HR_MAN')
+--------------
+
+Query OK, 1 row affected (0.00 sec)
+
+--------------
+/*  Query 12 */
+-- Question : Create a copy of the staff table and call it your_initials_emp. Add a column to the new table called department_name, and make this column the same data type and length as the department_namecolumn in the departments table. Display the names of the tables in your current database.
+CREATE TABLE C_A_emp LIKE staff
+--------------
+
+Query OK, 0 rows affected (0.06 sec)
+
+--------------
+ALTER TABLE C_A_emp
+ADD department_name VARCHAR(30)
+--------------
+
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+--------------
+ 
+SHOW TABLES
+--------------
+
++-------------------------+
+| Tables_in_restaurant    |
++-------------------------+
+| c_a_emp                 |
+| categories              |
+| customers               |
+| departments             |
+| food_items              |
+| global_locations_backup |
+| jobs                    |
+| o_departments           |
+| o_job_description       |
+| o_staff                 |
+| order_lines             |
+| orders                  |
+| promotional_menus       |
+| regular_menus           |
+| shift_assignments       |
+| shifts                  |
+| staff                   |
++-------------------------+
+17 rows in set (0.00 sec)
+
+--------------
+ 
+/*  Query 13 */
+-- Question : Remove the global_locations_backup table from the database. Display the names of the tables in your current database.
+DROP TABLE global_locations_backup
+--------------
+
+Query OK, 0 rows affected (0.03 sec)
+
+--------------
+SHOW TABLES
+--------------
+
++----------------------+
+| Tables_in_restaurant |
++----------------------+
+| c_a_emp              |
+| categories           |
+| customers            |
+| departments          |
+| food_items           |
+| jobs                 |
+| o_departments        |
+| o_job_description    |
+| o_staff              |
+| order_lines          |
+| orders               |
+| promotional_menus    |
+| regular_menus        |
+| shift_assignments    |
+| shifts               |
+| staff                |
++----------------------+
+16 rows in set (0.00 sec)
+
+mysql> notee

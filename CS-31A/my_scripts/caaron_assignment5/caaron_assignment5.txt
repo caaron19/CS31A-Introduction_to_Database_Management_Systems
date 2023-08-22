@@ -1,0 +1,444 @@
+mysql> source C:\Users\conno\Desktop\CS-31A\my_scripts\caaron_assignment5\caaron_assignment5.sql
+--------------
+/* Assignment5.sql 
+   CONNOR AARON
+   CS 31A, Fall 2021
+*/
+
+/* put the database name into this command */
+USE restaurant
+--------------
+
+Query OK, 0 rows affected (0.00 sec)
+
+--------------
+/* Query 1 */
+-- Question : For  each  order,  write  a  SQL  statement  that  displays  the  order  ID  and  order  date  along  with  the customer ID, first name, and last name of the customer for which the order was created. 
+SELECT os.order_number, os.order_date, cs.customer_id, cs.first_name, cs.last_name
+FROM orders os
+JOIN customers cs ON (os.cust_id = cs.customer_id)
+--------------
+
++--------------+------------+-------------+------------+-------------+
+| order_number | order_date | customer_id | first_name | last_name   |
++--------------+------------+-------------+------------+-------------+
+|         5343 | 2020-01-03 |          35 | Zachary    | Peter       |
+|         5363 | 2020-10-03 |          20 | Ryan       | Jacob       |
+|         5393 | 2020-08-03 |          45 | Willie     | Bruce       |
+|         5623 | 2020-04-05 |           3 | Michael    | John        |
+|         5679 | 2020-04-03 |          20 | Ryan       | Jacob       |
+|         5681 | 2020-04-04 |          23 | Stephen    | Larry       |
+|         5682 | 2020-05-09 |          40 | Billy      | Marilyn     |
+|         5683 | 2020-05-09 |          50 | Philip     | Judy        |
+|         5690 | 2020-04-21 |           6 | Christi    | Thomas      |
+|         5691 | 2020-07-03 |          29 | Patrick    | Jack        |
+|         5693 | 2020-08-19 |           7 | Charles    | Christopher |
+|         5694 | 2020-07-03 |          30 | Philip     | Dennis      |
+|         5773 | 2020-04-21 |           6 | Christi    | Thomas      |
+|         5783 | 2020-04-05 |           3 | Michael    | John        |
+|         5791 | 2020-05-09 |          40 | Billy      | Marilyn     |
+|         5792 | 2020-05-09 |          50 | Philip     | Judy        |
+|         5793 | 2020-08-03 |          45 | Willie     | Bruce       |
+|         5794 | 2020-07-03 |          30 | Philip     | Dennis      |
+|         5798 | 2020-03-03 |          10 | Thomas     | Rolston     |
+|         5799 | 2020-04-03 |          20 | Ryan       | Jacob       |
+|         6693 | 2020-10-03 |          43 | Evita      | Hodcroft    |
+|         7383 | 2020-10-03 |          43 | Evita      | Hodcroft    |
+|         7693 | 2020-10-03 |          20 | Ryan       | Jacob       |
++--------------+------------+-------------+------------+-------------+
+23 rows in set (0.00 sec)
+
+--------------
+/* Query 2 */
+-- Question : For each order placed on 04/24/2020, write a SQL statement that lists the  order number, customer ID, first name, and last name of the customer for which the order was created. 
+SELECT os.order_number, cs.customer_id, cs.first_name, cs.last_name
+FROM orders os
+JOIN customers cs ON (os.cust_id = cs.customer_id)
+WHERE order_date = '2020-04-24'
+--------------
+
+Empty set (0.00 sec)
+
+--------------
+/* Query 3 */
+-- Question : For  each  order,  write  a  SQL  statement  that  lists  the  item  number,  order  date,  order  ID,  quantity ordered, and price for each food item that makes up an order. 
+SELECT order_number, order_date, item_number, quantity, price
+FROM orders
+JOIN order_lines USING(order_number)
+JOIN food_items USING(item_number)
+ORDER BY order_number
+--------------
+
++--------------+------------+-------------+----------+-------+
+| order_number | order_date | item_number | quantity | price |
++--------------+------------+-------------+----------+-------+
+|         5343 | 2020-01-03 |          80 |        2 |  8.09 |
+|         5343 | 2020-01-03 |          85 |        1 |  3.59 |
+|         5363 | 2020-10-03 |          83 |        1 |  9.59 |
+|         5393 | 2020-08-03 |          95 |        4 |  1.09 |
+|         5623 | 2020-04-05 |          91 |        2 |  1.09 |
+|         5623 | 2020-04-05 |          90 |        2 |  1.09 |
+|         5623 | 2020-04-05 |          92 |        1 |  3.59 |
+|         5682 | 2020-05-09 |          90 |        1 |  1.09 |
+|         5682 | 2020-05-09 |          95 |        2 |  1.09 |
+|         5683 | 2020-05-09 |          95 |        1 |  1.09 |
+|         5683 | 2020-05-09 |          93 |        2 |  3.59 |
+|         5691 | 2020-07-03 |          96 |        2 |  3.59 |
+|         5691 | 2020-07-03 |          92 |        2 |  3.59 |
+|         5693 | 2020-08-19 |          90 |        2 |  1.09 |
+|         5693 | 2020-08-19 |          95 |        1 |  1.09 |
+|         5694 | 2020-07-03 |          90 |        2 |  1.09 |
+|         5694 | 2020-07-03 |          97 |        2 |  3.59 |
+|         5773 | 2020-04-21 |          80 |        2 |  8.09 |
+|         5783 | 2020-04-05 |          80 |        2 |  8.09 |
+|         5783 | 2020-04-05 |          85 |        1 |  3.59 |
+|         5791 | 2020-05-09 |          86 |        2 |  5.75 |
+|         5791 | 2020-05-09 |          83 |        3 |  9.59 |
+|         5791 | 2020-05-09 |          82 |        2 | 10.09 |
+|         5792 | 2020-05-09 |          80 |        1 |  8.09 |
+|         5792 | 2020-05-09 |          85 |        2 |  3.59 |
+|         5793 | 2020-08-03 |          85 |        1 |  3.59 |
+|         5793 | 2020-08-03 |          90 |        2 |  1.09 |
+|         5793 | 2020-08-03 |          83 |        2 |  9.59 |
+|         5793 | 2020-08-03 |          93 |        1 |  3.59 |
+|         5793 | 2020-08-03 |          82 |        1 | 10.09 |
+|         5793 | 2020-08-03 |          81 |        2 | 13.59 |
+|         5793 | 2020-08-03 |          95 |        1 |  1.09 |
+|         5794 | 2020-07-03 |          80 |        2 |  8.09 |
+|         5794 | 2020-07-03 |          87 |        2 |  3.59 |
+|         5798 | 2020-03-03 |          80 |        2 |  8.09 |
+|         5798 | 2020-03-03 |          87 |        1 |  3.59 |
+|         5799 | 2020-04-03 |          82 |        1 | 10.09 |
+|         6693 | 2020-10-03 |          93 |        1 |  3.59 |
+|         7383 | 2020-10-03 |          83 |        1 |  9.59 |
+|         7383 | 2020-10-03 |          80 |        2 |  8.09 |
+|         7693 | 2020-10-03 |          90 |        2 |  1.09 |
++--------------+------------+-------------+----------+-------+
+41 rows in set (0.00 sec)
+
+--------------
+/* Query 4 */
+-- Question : For each order, write a SQL statement that lists the food item number, order date, order number, and description for each food item that makes up an order. Order the rows by category and then by order number. 
+SELECT order_number, order_date, item_number, description
+FROM orders
+JOIN order_lines USING(order_number)
+JOIN food_items USING(item_number)
+ORDER BY category_id, order_number
+--------------
+
++--------------+------------+-------------+------------------------+
+| order_number | order_date | item_number | description            |
++--------------+------------+-------------+------------------------+
+|         5343 | 2020-01-03 |          80 | Cheeseburger           |
+|         5623 | 2020-04-05 |          90 | Hamburger              |
+|         5682 | 2020-05-09 |          90 | Hamburger              |
+|         5693 | 2020-08-19 |          90 | Hamburger              |
+|         5694 | 2020-07-03 |          90 | Hamburger              |
+|         5773 | 2020-04-21 |          80 | Cheeseburger           |
+|         5783 | 2020-04-05 |          80 | Cheeseburger           |
+|         5792 | 2020-05-09 |          80 | Cheeseburger           |
+|         5793 | 2020-08-03 |          81 | Double Cheeseburger    |
+|         5793 | 2020-08-03 |          90 | Hamburger              |
+|         5794 | 2020-07-03 |          80 | Cheeseburger           |
+|         5798 | 2020-03-03 |          80 | Cheeseburger           |
+|         7383 | 2020-10-03 |          80 | Cheeseburger           |
+|         7693 | 2020-10-03 |          90 | Hamburger              |
+|         5363 | 2020-10-03 |          83 | Chicken Sandwich       |
+|         5623 | 2020-04-05 |          91 | Spicy Chicken Sandwich |
+|         5683 | 2020-05-09 |          93 | Chicken McNuggets      |
+|         5791 | 2020-05-09 |          82 | Spicy Chicken McBite   |
+|         5791 | 2020-05-09 |          83 | Chicken Sandwich       |
+|         5793 | 2020-08-03 |          82 | Spicy Chicken McBite   |
+|         5793 | 2020-08-03 |          83 | Chicken Sandwich       |
+|         5793 | 2020-08-03 |          93 | Chicken McNuggets      |
+|         5794 | 2020-07-03 |          87 | BBQ Snack Wrap         |
+|         5798 | 2020-03-03 |          87 | BBQ Snack Wrap         |
+|         5799 | 2020-04-03 |          82 | Spicy Chicken McBite   |
+|         6693 | 2020-10-03 |          93 | Chicken McNuggets      |
+|         7383 | 2020-10-03 |          83 | Chicken Sandwich       |
+|         5694 | 2020-07-03 |          97 | Caesar Salad           |
+|         5343 | 2020-01-03 |          85 | Apple Slices           |
+|         5783 | 2020-04-05 |          85 | Apple Slices           |
+|         5792 | 2020-05-09 |          85 | Apple Slices           |
+|         5793 | 2020-08-03 |          85 | Apple Slices           |
+|         5623 | 2020-04-05 |          92 | Iced Latte             |
+|         5691 | 2020-07-03 |          92 | Iced Latte             |
+|         5791 | 2020-05-09 |          86 | SRoast Coffee          |
+|         5393 | 2020-08-03 |          95 | Baked Apple Pie        |
+|         5682 | 2020-05-09 |          95 | Baked Apple Pie        |
+|         5683 | 2020-05-09 |          95 | Baked Apple Pie        |
+|         5691 | 2020-07-03 |          96 | Sugar Cookie           |
+|         5693 | 2020-08-19 |          95 | Baked Apple Pie        |
+|         5793 | 2020-08-03 |          95 | Baked Apple Pie        |
++--------------+------------+-------------+------------------------+
+41 rows in set (0.00 sec)
+
+--------------
+/* Query 5 */
+-- Question : Write a SQL statement that lists the order number and order date for each order that contains the food item description 'Chicken Sandwich'. 
+SELECT order_number, order_date
+FROM orders
+JOIN order_lines USING(order_number)
+JOIN food_items USING(item_number)
+WHERE description = 'Chicken Sandwich'
+--------------
+
++--------------+------------+
+| order_number | order_date |
++--------------+------------+
+|         5363 | 2020-10-03 |
+|         5791 | 2020-05-09 |
+|         5793 | 2020-08-03 |
+|         7383 | 2020-10-03 |
++--------------+------------+
+4 rows in set (0.00 sec)
+
+--------------
+/* Query 6 */
+-- Question : Write a SQL statement that lists the order number and order date for each order that was created for Philip Dennis but does not contain the food item description 'Shack Burger'.  
+SELECT order_number, order_date
+FROM orders
+JOIN order_lines USING(order_number)
+JOIN food_items USING(item_number)
+WHERE cust_id = 30 AND description != 'Shack Burger'
+--------------
+
++--------------+------------+
+| order_number | order_date |
++--------------+------------+
+|         5694 | 2020-07-03 |
+|         5694 | 2020-07-03 |
+|         5794 | 2020-07-03 |
+|         5794 | 2020-07-03 |
++--------------+------------+
+4 rows in set (0.00 sec)
+
+--------------
+/* Query 7 */
+-- Question : Return the first name, last name, and department name for all employees including those employees not assigned to a department.  
+SELECT s.first_name, s.last_name, d.department_name
+FROM staff s
+LEFT JOIN departments d ON (s.dept_id = d.department_id)
+--------------
+
++------------+-----------+-----------------+
+| first_name | last_name | department_name |
++------------+-----------+-----------------+
+| Colton     | Landon    | Administration  |
+| Jayden     | Nolan     | Administration  |
+| Katrine    | Griffin   | Kitchen Staff   |
+| Omar       | Lane      | Delivery Staff  |
+| Nicolas    | Patrick   | Kitchen Staff   |
+| Arthur     | Luka      | Kitchen Staff   |
+| Rylan      | Ricardo   | Floor Staff     |
+| Peter      | Steven    | Kitchen Staff   |
+| Emilia     | Nasir     | Floor Staff     |
+| Sarah      | Phillip   | Accounting      |
+| Baylor     | Collin    | Floor Staff     |
+| Derek      | Raymond   | Delivery Staff  |
+| Rayna      | Rafael    | Delivery Staff  |
+| Jere       | Colson    | Floor Staff     |
+| Maya       | Spurman   | IT              |
+| Layla      | Justin    | Kitchen Staff   |
+| Jake       | Manuel    | IT              |
+| Maxwell    | Cooper    | Administration  |
+| Alex       | Zayden    | Kitchen Staff   |
+| Nora       | Marcos    | Accounting      |
+| Frank      | Milan     | Floor Staff     |
+| Ivan       | Diego     | Kitchen Staff   |
+| Mark       | Calvin    | Kitchen Staff   |
+| Erik       | Emanuel   | Floor Staff     |
+| Reed       | Ayaan     | Floor Staff     |
+| Marvin     | Edison    | Floor Staff     |
+| Taylor     | Yusuf     | Accounting      |
+| Louis      | Zayn      | Delivery Staff  |
+| Marco      | Andy      | Floor Staff     |
+| Marcus     | Jeremy    | Kitchen Staff   |
++------------+-----------+-----------------+
+30 rows in set (0.00 sec)
+
+--------------
+/* Query 8 */
+-- Question : Return the first name, last name, and  department name for all employees including those departments that do not have an employee assigned to them. 
+SELECT s.first_name, s.last_name, d.department_name
+FROM departments d
+LEFT JOIN staff s ON (d.department_id = s.dept_id)
+--------------
+
++------------+-----------+-----------------+
+| first_name | last_name | department_name |
++------------+-----------+-----------------+
+| Colton     | Landon    | Administration  |
+| Jayden     | Nolan     | Administration  |
+| Maxwell    | Cooper    | Administration  |
+| Katrine    | Griffin   | Kitchen Staff   |
+| Nicolas    | Patrick   | Kitchen Staff   |
+| Arthur     | Luka      | Kitchen Staff   |
+| Peter      | Steven    | Kitchen Staff   |
+| Layla      | Justin    | Kitchen Staff   |
+| Alex       | Zayden    | Kitchen Staff   |
+| Ivan       | Diego     | Kitchen Staff   |
+| Mark       | Calvin    | Kitchen Staff   |
+| Marcus     | Jeremy    | Kitchen Staff   |
+| Omar       | Lane      | Delivery Staff  |
+| Derek      | Raymond   | Delivery Staff  |
+| Rayna      | Rafael    | Delivery Staff  |
+| Louis      | Zayn      | Delivery Staff  |
+| Maya       | Spurman   | IT              |
+| Jake       | Manuel    | IT              |
+| Rylan      | Ricardo   | Floor Staff     |
+| Emilia     | Nasir     | Floor Staff     |
+| Baylor     | Collin    | Floor Staff     |
+| Jere       | Colson    | Floor Staff     |
+| Frank      | Milan     | Floor Staff     |
+| Erik       | Emanuel   | Floor Staff     |
+| Reed       | Ayaan     | Floor Staff     |
+| Marvin     | Edison    | Floor Staff     |
+| Marco      | Andy      | Floor Staff     |
+| Sarah      | Phillip   | Accounting      |
+| Nora       | Marcos    | Accounting      |
+| Taylor     | Yusuf     | Accounting      |
++------------+-----------+-----------------+
+30 rows in set (0.00 sec)
+
+--------------
+/* Query 9 */
+-- Question : Using the International Foods Restaurant database, show all shift descriptions and shift assignment dates (even if there is no date assigned for each shift description). 
+SELECT description, shift_assign_date
+FROM shifts
+LEFT JOIN shift_assignments USING(code)
+--------------
+
++-------------+-------------------+
+| description | shift_assign_date |
++-------------+-------------------+
+| 8am to 12pm | 2020-08-03        |
+| 8am to 12pm | 2020-03-03        |
+| 8am to 12pm | 2020-05-03        |
+| 8am to 12pm | 2020-04-03        |
+| 8am to 12pm | 2020-02-03        |
+| 6pm to 10pm | 2020-04-03        |
+| 6pm to 10pm | 2020-04-03        |
+| 6pm to 10pm | 2020-03-03        |
++-------------+-------------------+
+8 rows in set (0.00 sec)
+
+--------------
+/*  Query 10 */
+-- Question : You need to produce a report for International Foods Restaurant showing customers and orders. A customer must be included on the report even if the customer has had no orders. 
+SELECT cs.customer_id, cs.last_name, os.order_date
+FROM customers cs
+LEFT JOIN orders os ON (cs.customer_id = os.cust_id)
+--------------
+
++-------------+-------------+------------+
+| customer_id | last_name   | order_date |
++-------------+-------------+------------+
+|           1 | James       | NULL       |
+|           2 | Robert      | NULL       |
+|           3 | John        | 2020-04-05 |
+|           3 | John        | 2020-04-05 |
+|           4 | William     | NULL       |
+|           5 | Joseph      | NULL       |
+|           6 | Thomas      | 2020-04-21 |
+|           6 | Thomas      | 2020-04-21 |
+|           7 | Christopher | 2020-08-19 |
+|           8 | Matthew     | NULL       |
+|           9 | Josephsen   | NULL       |
+|          10 | Rolston     | 2020-03-03 |
+|          11 | Donald      | NULL       |
+|          12 | Abbay       | NULL       |
+|          13 | Paul        | NULL       |
+|          14 | Joshua      | NULL       |
+|          15 | Kevin       | NULL       |
+|          16 | George      | NULL       |
+|          17 | Ronald      | NULL       |
+|          18 | Jason       | NULL       |
+|          19 | Enderson    | NULL       |
+|          20 | Jacob       | 2020-10-03 |
+|          20 | Jacob       | 2020-04-03 |
+|          20 | Jacob       | 2020-04-03 |
+|          20 | Jacob       | 2020-10-03 |
+|          21 | Nicholas    | NULL       |
+|          22 | Jonathan    | NULL       |
+|          23 | Larry       | 2020-04-04 |
+|          24 | Scott       | NULL       |
+|          25 | Benjamin    | NULL       |
+|          26 | Gregory     | NULL       |
+|          27 | Frank       | NULL       |
+|          28 | Raymond     | NULL       |
+|          29 | Jack        | 2020-07-03 |
+|          30 | Dennis      | 2020-07-03 |
+|          30 | Dennis      | 2020-07-03 |
+|          31 | Tyler       | NULL       |
+|          32 | Jose        | NULL       |
+|          33 | Adam        | NULL       |
+|          34 | Nathan      | NULL       |
+|          35 | Peter       | 2020-01-03 |
+|          36 | Ethan       | NULL       |
+|          37 | Austin      | NULL       |
+|          38 | Bryan       | NULL       |
+|          39 | Jordan      | NULL       |
+|          40 | Marilyn     | 2020-05-09 |
+|          40 | Marilyn     | 2020-05-09 |
+|          41 | Donna       | NULL       |
+|          42 | Patillo     | NULL       |
+|          43 | Hodcroft    | 2020-10-03 |
+|          43 | Hodcroft    | 2020-10-03 |
+|          44 | Gabby       | NULL       |
+|          45 | Bruce       | 2020-08-03 |
+|          45 | Bruce       | 2020-08-03 |
+|          46 | Ralph       | NULL       |
+|          47 | Diana       | NULL       |
+|          48 | Galletly    | NULL       |
+|          49 | Bobby       | NULL       |
+|          50 | Judy        | 2020-05-09 |
+|          50 | Judy        | 2020-05-09 |
++-------------+-------------+------------+
+60 rows in set (0.00 sec)
+
+--------------
+/*  Query 11 */
+-- Question : Create a query of the database that shows employee last names, department IDs, and department names. Include all employees even if they are not assigned to a department. 
+SELECT s.last_name, s.dept_id, d.department_name
+FROM staff s
+LEFT JOIN departments d ON (s.dept_id = d.department_id)
+--------------
+
++-----------+---------+-----------------+
+| last_name | dept_id | department_name |
++-----------+---------+-----------------+
+| Landon    |      10 | Administration  |
+| Nolan     |      10 | Administration  |
+| Griffin   |      20 | Kitchen Staff   |
+| Lane      |      30 | Delivery Staff  |
+| Patrick   |      20 | Kitchen Staff   |
+| Luka      |      20 | Kitchen Staff   |
+| Ricardo   |      50 | Floor Staff     |
+| Steven    |      20 | Kitchen Staff   |
+| Nasir     |      50 | Floor Staff     |
+| Phillip   |      60 | Accounting      |
+| Collin    |      50 | Floor Staff     |
+| Raymond   |      30 | Delivery Staff  |
+| Rafael    |      30 | Delivery Staff  |
+| Colson    |      50 | Floor Staff     |
+| Spurman   |      40 | IT              |
+| Justin    |      20 | Kitchen Staff   |
+| Manuel    |      40 | IT              |
+| Cooper    |      10 | Administration  |
+| Zayden    |      20 | Kitchen Staff   |
+| Marcos    |      60 | Accounting      |
+| Milan     |      50 | Floor Staff     |
+| Diego     |      20 | Kitchen Staff   |
+| Calvin    |      20 | Kitchen Staff   |
+| Emanuel   |      50 | Floor Staff     |
+| Ayaan     |      50 | Floor Staff     |
+| Edison    |      50 | Floor Staff     |
+| Yusuf     |      60 | Accounting      |
+| Zayn      |      30 | Delivery Staff  |
+| Andy      |      50 | Floor Staff     |
+| Jeremy    |      20 | Kitchen Staff   |
++-----------+---------+-----------------+
+30 rows in set (0.00 sec)
+
+mysql> notee
